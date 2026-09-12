@@ -1,7 +1,7 @@
 import express from "express";
 import { createDB } from "../db.js";
 
-export const usersRouter = express.router();
+export const usersRouter = express.Router();
 
 const db = createDB();
 
