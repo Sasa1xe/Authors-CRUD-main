@@ -5,18 +5,27 @@ const dbPath = path.join(import.meta.dirname, "data.json");
 
 export function createDB() {
   return {
+    //get By Id
     async getById(resource, id) {
+      //1. Read DB file from disk
       const data = await fs.readFile(dbPath, { encoding: "utf-8" });
+      // 2. Parse JSON string -> JS obj
       const json = JSON.parse(data);
+      // 3. Search resource arr, match id (string compare), return match or undefined
       return json[resource].find((x) => String(x.id) === String(id));
     },
 
+    //Get all data
     async getAll(resource) {
+      // 1. Read DB file from disk
       const data = await fs.readFile(dbPath, { encoding: "utf-8" });
+      // 2. Parse JSON string -> JS obj
       const json = JSON.parse(data);
+      // 3. Return full resource arr
       return json[resource];
     },
 
+    //Create
     async create(resource, obj) {
       // 1. Read raw DB file from disk
       const data = await fs.readFile(dbPath, { encoding: "utf-8" });
@@ -37,44 +46,60 @@ export function createDB() {
       return newObj;
     },
 
+    //Update
     async update(resource, id, updates) {
+      // 1. Read DB file from disk
       const data = await fs.readFile(dbPath, { encoding: "utf-8" });
+      // 2. Parse JSON string -> JS obj
       const json = JSON.parse(data);
-     //--------------Going through the User's Array and Updating it------------    
+
+    //--------------Going through the User's Array and Updating it-------------------
+      // 3. Map over resource arr: id matches updates -> id no match keep as-is
       const newResource = json[resource].map((x) => {
-        if (x.id != id) {  //  if the ID matches : don't change
+        if (x.id != id) {
+          //  if the ID matches : don't change
           return x;
         } else {
           return {
             ...x,
             ...updates,
-            id: x.id,
+            id: x.id, // keep orig id, block overwrite via updates
           };
         }
       });
-      //-----------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+
+      // 4. Rebuild full DB obj w updated resource arr
       const newData = {
         ...json,
         [resource]: newResource,
       };
+      // 5. Save back to file (no return val)
       await fs.writeFile(dbPath, JSON.stringify(newData));
     },
 
+    //Delete
     async delete(resource, id) {
+      // 1. Read DB file from disk
       const data = await fs.readFile(dbPath, { encoding: "utf-8" });
+      // 2. Parse JSON string -> JS obj
       const json = JSON.parse(data);
+      // 3. Filter out item w matching id (loose compare)
       const newResource = json[resource].filter((x) => x.id != id);
 
+      // 4. Rebuild full DB obj w filtered resource arr
       const newData = {
         ...json,
         [resource]: newResource,
       };
 
+      // 5. Save back to file (no return val)
       await fs.writeFile(dbPath, JSON.stringify(newData));
     },
   };
 }
 
 function getId() {
+  // Gen random id string, 0–9999999 range
   return String(Math.floor(Math.random() * 10000000));
 }
