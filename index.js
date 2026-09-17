@@ -1,7 +1,6 @@
 import express from "express";
 
-import { AuthorsRoute } from "./routes/authors.route.js";
-import { usersRouter } from "./routes/users.route.js";
+import { AuthorsRouter } from "./routes/authors.route.js";
 
 const app = express();
 app.use(express.json());
@@ -12,8 +11,7 @@ app.use((req, res, next) => {
 });
 
 //------------Routes---------------
-app.use("/authors", AuthorsRoute);
-app.use("/users", usersRouter);
+app.use("/authors", AuthorsRouter);
 //---------------------------------
 
 //------------Error Handler-----------
