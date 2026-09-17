@@ -7,11 +7,11 @@ import { AuthorsSchema } from "../schemas/AuthorsSchema.js";
 import { AuthorIdSchema } from "../schemas/AuthorIdSchema.js";
 import { QuerySchema } from "../schemas/QuerySchema.js";
 
-export const AuthorsRoute = express.Router();
+export const AuthorsRouter = express.Router();
 const db = createDB();
 
 // get all authors
-AuthorsRoute.get("/", validateQuery(QuerySchema), async (req, res) => {
+AuthorsRouter.get("/", validateQuery(QuerySchema), async (req, res) => {
   const authors = await db.getAll("authors");
   const search = req.query.search;
 
@@ -26,7 +26,7 @@ AuthorsRoute.get("/", validateQuery(QuerySchema), async (req, res) => {
 });
 
 // GET a specific author bu his ID
-AuthorsRoute.get("/:author_id", validateParams(AuthorIdSchema), async (req, res) => {
+AuthorsRouter.get("/:author_id", validateParams(AuthorIdSchema), async (req, res) => {
   const author = await db.getById("authors", req.params.author_id);
 
   if (!author) {
@@ -37,7 +37,7 @@ AuthorsRoute.get("/:author_id", validateParams(AuthorIdSchema), async (req, res)
 });
 
 //Create Author
-AuthorsRoute.post("/", validateBody(AuthorsSchema), async (req, res) => {
+AuthorsRouter.post("/", validateBody(AuthorsSchema), async (req, res) => {
   const authorData = req.body;
 
   await db.create("authors", authorData);
@@ -46,7 +46,7 @@ AuthorsRoute.post("/", validateBody(AuthorsSchema), async (req, res) => {
 });
 
 // Update Author
-AuthorsRoute.patch(
+AuthorsRouter.patch(
   "/:author_id",
   validateParams(AuthorIdSchema),
   validateBody(AuthorsSchema),
@@ -70,7 +70,7 @@ AuthorsRoute.patch(
 );
 
 // Delete Author
-AuthorsRoute.delete("/:author_id", validateParams(AuthorIdSchema), async (req, res) => {
+AuthorsRouter.delete("/:author_id", validateParams(AuthorIdSchema), async (req, res) => {
   const id = req.params.author_id;
   const author = await db.getById("authors", id);
 
